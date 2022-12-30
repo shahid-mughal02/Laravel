@@ -1,0 +1,136 @@
+----Install----
+cmd: composer create-project --prefer-dist laravel/laravel:^7.0 Project_name
+
+//Serve Project
+cmd: php artisan Serve
+
+//Install Jetstream package
+-Jetstream provides the implementation for your application's login, registration, email verification, two-factor authentication, session management, API via Laravel Sanctum , and optional team management features. Jetstream is designed using Tailwind CSS and offers your choice of Livewire or Inertia scaffolding
+
+cmd: composer require laravel/jetstream
+
+
+
+//Instal Live Wire
+-Laravel Livewire is a library that makes it simple to build modern, reactive, dynamic interfaces using Laravel Blade as your templating language. This is a great stack to choose if you want to build an application that is dynamic and reactive, and is a great alternative to a full JavaScript framework like Vue. js
+
+cmd: php artisan jetstream:install livewire
+
+//Migrate table to DB
+cmd: php artisan migrate
+
+//install controller
+cmd: php artisan make:controller HomeController
+
+//install Strip Payment
+cmd: composer require stripe/stripe-php
+1. create stripe account
+2. changes in the .env
+3. make the rout
+4. make a view for Payment
+5. write the cod for payment controller
+
+//Download PDF
+cmd: composer require barryvdh/laravel-dompdf
+1. Config/app.php
+'providers' => [
+    ......
+    Barryvdh\DomPDF\ServiceProvider::class,
+],
+
+'aliases' => [
+    ......
+    'PDF' => Barryvdh\DomPDF\Facade::class,
+]
+
+//Turn On Mail Service
+
+MAIL_MAILER=smtp
+MAIL_HOST=mailhog
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+
+--Replace above code with below code
+
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=465
+MAIL_USERNAME=example_gmail@gmail.com
+MAIL_PASSWORD=generate App key from seciruty settings
+MAIL_ENCRYPTION=ssl
+MAIL_FROM_ADDRESS="example_gmail@gmail.com"
+MAIL_FROM_NAME="eCommerce Mail"
+
+//Changes in User controller
+class User extends Authenticatable
+--Replace above code with below code
+class User extends Authenticatable implements MustVerifyEmail
+
+//Changes
+Config/fortify.php
+UnCommect below code
+    // Features::emailVerification(),
+
+Email Notification:
+
+1. php artisan notifications:table
+2. php artisan migrate
+3. php artisan make:notification SendEmailNotification
+
+changes in the notification file (Notification/SendEmailNotification)
+    use Queueable;
+    private $details;
+
+    /**
+     * Create a new notification instance.
+     *
+     * @return void
+     */
+    public function __construct($details)
+    {
+        //
+        $this->details = $details;
+    }
+
+and change below according to view names
+public function toMail($notifiable)
+    {
+        return (new MailMessage)
+            ->line('The introduction to the notification.')
+            ->action('Notification Action', url('/'))
+            ->line('Thank you for using our application!');
+    }
+    Replace
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)
+            ->greeting($this->details['greeting'])
+            ->line($this->details['body'])
+            ->action($this->details['button'], $this->details['url'])
+            ->line($this->details['end']);
+    }
+
+//Customise the Email Template
+php artisan vendor:publish --tag=laravel-mail
+
+
+//Comments 
+
+create two table for comment and reply
+
+//Sweet Alert
+cdm: composer require realrashid/sweet-alert
+
+1. php artisan sweetalert:publish
+
+2. Add this to view where you want to show message
+@include('sweetalert::alert')
+
+3. Go to your Controller and add this at the top
+use RealRashid\SweetAlert\Facades\Alert;
+
+4. Send the alert message from the controller function and we are DONE
